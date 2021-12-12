@@ -13,22 +13,14 @@ fn main() {
 }
 
 fn part1(bingo_board: &Vec<String>) -> u32 {
-    let numbers = bingo_board[0]
-        .split(",")
-        .map(|n| n.parse::<u32>().unwrap())
-        .collect::<Vec<u32>>();
-    let mut bingo_board_clean = bingo_board.to_vec();
-    bingo_board_clean.remove(0);
-    bingo_board_clean.remove(0);
-
-    let mut boards = create_boards(&bingo_board_clean);
-
+    let (mut boards, numbers) = extract_board_and_number(bingo_board);
     let mut res = 0;
     // for number in &numbers.as_slice()[..12] {
     for number in &numbers {
         // println!("number  {}", number);
         for board in &mut boards {
-            res = board.mark_value(*number);
+            board.mark_value(*number);
+            res = board.check_win(*number);
             if res > 0 {
                 break;
             }
@@ -41,6 +33,55 @@ fn part1(bingo_board: &Vec<String>) -> u32 {
     // println!("board 1 {:?}", boards[0]);
 
     res
+}
+
+fn part2(bingo_board: &Vec<String>) -> u32 {
+    let (mut boards, numbers) = extract_board_and_number(bingo_board);
+
+    let mut win_board = boards.iter().map(|_| false).collect::<Vec<bool>>();
+    let mut res = 0;
+
+    for number in &numbers {
+        let mut pos = 0;
+        for board in boards.iter_mut() {
+            if !win_board[pos] {
+                board.mark_value(*number);
+                let tmp_res = board.check_win(*number);
+                if tmp_res > 0 {
+                    win_board[pos] = true;
+                    let mut is_last = true;
+                    win_board.iter().for_each(|v| {
+                        is_last = is_last & v;
+                    });
+                    if is_last {
+                        res = tmp_res;
+                        break;
+                    }
+                }
+            }
+
+            pos += 1;
+        }
+        if res > 0 {
+            break;
+        }
+    }
+
+    res
+}
+
+fn extract_board_and_number(bingo_board: &Vec<String>) -> (Vec<Board>, Vec<u32>) {
+    let numbers = bingo_board[0]
+        .split(",")
+        .map(|n| n.parse::<u32>().unwrap())
+        .collect::<Vec<u32>>();
+    let mut bingo_board_clean = bingo_board.to_vec();
+    bingo_board_clean.remove(0);
+    bingo_board_clean.remove(0);
+
+    let boards = create_boards(&bingo_board_clean);
+
+    (boards, numbers)
 }
 
 fn create_boards(bingo_board_clean: &Vec<String>) -> Vec<Board> {
@@ -62,10 +103,6 @@ fn create_boards(bingo_board_clean: &Vec<String>) -> Vec<Board> {
     boards
 }
 
-fn part2(bingo_board: &Vec<String>) -> u32 {
-    0
-}
-
 #[derive(Debug)]
 struct Case {
     value: u32,
@@ -80,7 +117,7 @@ impl Case {
         }
     }
 
-    pub fn mark_value(self: &mut Self, number: u32) {
+    pub fn mark_value(&mut self, number: u32) {
         if self.value == number {
             self.is_marked = true;
         }
@@ -103,13 +140,13 @@ impl Line {
         }
     }
 
-    pub fn mark_value(self: &mut Self, number: u32) {
+    pub fn mark_value(&mut self, number: u32) {
         self.line
             .iter_mut()
             .for_each(|case| case.mark_value(number));
     }
 
-    pub fn is_complete(self: &Self) -> bool {
+    pub fn is_complete(&self) -> bool {
         let mut is_complete = true;
         self.line.iter().for_each(|case| {
             is_complete = is_complete && case.is_marked;
@@ -118,11 +155,11 @@ impl Line {
         is_complete
     }
 
-    pub fn is_marked(self: &Self, pos: usize) -> bool {
+    pub fn is_marked(&self, pos: usize) -> bool {
         self.line[pos].is_marked
     }
 
-    pub fn sum_unmarked(self: &Self) -> u32 {
+    pub fn sum_unmarked(&self) -> u32 {
         let mut sum = 0;
         self.line.iter().for_each(|case| {
             if !case.is_marked {
@@ -145,11 +182,14 @@ impl Board {
             matrice: lines.iter().map(|l| Line::new((&l).to_string())).collect(),
         }
     }
-    pub fn mark_value(self: &mut Self, number: u32) -> u32 {
+
+    pub fn mark_value(&mut self, number: u32) {
         self.matrice
             .iter_mut()
             .for_each(|line| line.mark_value(number));
+    }
 
+    pub fn check_win(&self, number: u32) -> u32 {
         let mut sum: u32 = 0;
         let res_line = self
             .matrice
@@ -199,6 +239,6 @@ mod tests {
         let filename = "src/demo.txt";
         let res = part2(&read_file(filename));
 
-        assert_eq!(res, 0);
+        assert_eq!(res, 1924);
     }
 }
