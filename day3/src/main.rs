@@ -13,24 +13,44 @@ fn main() {
     println!("PART 2 : {}", res);
 }
 
-fn split_bit<'a>(bit_number_string: &'a String) -> Vec<&'a str> {
-    bit_number_string
-        .split("")
-        .filter(|a| *a == "0" || *a == "1")
-        .collect::<Vec<&'a str>>()
-}
 
 fn part1(diag_report: &Vec<String>) -> i32 {
-    let mut gamma_rate = 0;
-    let mut epsilon_rate = 0;
+    let list_most_one = list_most_one(&diag_report);
 
-    let number_size = split_bit(&diag_report[0]).len();
+    let majority = diag_report.len() as i32 / 2;
+    let gamma_rate_string = list_most_one
+        .iter()
+        .map(|count| if *count > majority { "1" } else { "0" })
+        .collect::<Vec<&str>>()
+        .join("");
+    let epsilon_rate_string = list_most_one
+        .iter()
+        .map(|count| if *count > majority { "0" } else { "1" })
+        .collect::<Vec<&str>>()
+        .join("");
+
+    let gamma_rate = i32::from_str_radix(gamma_rate_string.as_str(), 2).unwrap();
+    let epsilon_rate = i32::from_str_radix(epsilon_rate_string.as_str(), 2).unwrap();
+
+    gamma_rate * epsilon_rate
+}
+
+
+fn part2(diag_report: &Vec<String>) -> i32 {
+    let oxygen_rate = extract_rate(diag_report, true, None);
+    let co2_rate = extract_rate(diag_report, false, None);
+
+    oxygen_rate * co2_rate
+}
+
+fn list_most_one(binary_number_list: &Vec<String>) -> Vec<i32> {
+    let number_size = split_bit(&binary_number_list[0]).len();
     let mut acc_one: Vec<i32> = Vec::with_capacity(number_size);
     for _ in 0..number_size {
         acc_one.push(0);
     }
 
-    diag_report.iter().for_each(|l| {
+    binary_number_list.iter().for_each(|l| {
         let bit_list = split_bit(l);
 
         for (pos, val) in bit_list.into_iter().enumerate() {
@@ -40,28 +60,50 @@ fn part1(diag_report: &Vec<String>) -> i32 {
         }
     });
 
-    let majority = diag_report.len() as i32 / 2;
-    let gamma_rate_string = acc_one
-        .iter()
-        .map(|count| if *count > majority { "1" } else { "0" })
-        .collect::<Vec<&str>>()
-        .join("");
-    let epsilon_rate_string = acc_one
-        .iter()
-        .map(|count| if *count > majority { "0" } else { "1" })
-        .collect::<Vec<&str>>()
-        .join("");
-
-    gamma_rate = i32::from_str_radix(gamma_rate_string.as_str(), 2).unwrap();
-    epsilon_rate = i32::from_str_radix(epsilon_rate_string.as_str(), 2).unwrap();
-
-    // acc_one.iter().for_each(|c| println!("{}", *c));
-
-    gamma_rate * epsilon_rate
+    acc_one
 }
 
-fn part2(diag_report: &Vec<String>) -> i32 {
-    0
+fn split_bit<'a>(bit_number_string: &'a String) -> Vec<&'a str> {
+    bit_number_string
+        .split("")
+        .filter(|a| *a == "0" || *a == "1")
+        .collect::<Vec<&'a str>>()
+}
+
+fn filter_report(diag_report: &Vec<String>, pos: usize, char: &str) -> Vec<String> {
+    diag_report
+        .to_vec()
+        .into_iter()
+        .filter(|line| line.chars().nth(pos).unwrap().to_string().as_str() == char)
+        .collect::<Vec<String>>()
+}
+
+fn extract_rate(diag_report: &Vec<String>, isMost: bool, position: Option<usize>) -> i32 {
+    if diag_report.len() == 1 {
+        // println!("{}", diag_report[0]);
+        return i32::from_str_radix(diag_report[0].as_str(), 2).unwrap();
+    }
+
+    let mut pos = position.unwrap_or(0);
+    let majority = diag_report.len() as f32 / 2f32;
+    let list_most_one = list_most_one(&diag_report);
+    let mut new_diag_report = vec![];
+
+    if isMost {
+        if list_most_one[pos] as f32 >= majority {
+            new_diag_report = filter_report(diag_report, pos, "1");
+        } else {
+            new_diag_report = filter_report(diag_report, pos, "0");
+        }
+    } else {
+        if (list_most_one[pos] as f32) < majority {
+            new_diag_report = filter_report(diag_report, pos, "1");
+        } else {
+            new_diag_report = filter_report(diag_report, pos, "0");
+        }
+    }
+    pos += 1;
+    extract_rate(&new_diag_report, isMost, Some(pos))
 }
 
 #[cfg(test)]
@@ -81,6 +123,6 @@ mod tests {
         let filename = "src/demo.txt";
         let res = part2(&read_file(filename));
 
-        assert_eq!(res, 0);
+        assert_eq!(res, 230);
     }
 }
