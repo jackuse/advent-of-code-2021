@@ -69,7 +69,7 @@ mod tests {
 
     #[test]
     fn should_pass_part1_demo() {
-        let filename = "day01/src/report.txt";
+        let filename = "src/report.txt";
         let number_list = convert_string_to_number(read_file(filename));
         let res = part_1_count_increase(&number_list);
 
@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn should_pass_part2_demo() {
-        let filename = "day01/src/report.txt";
+        let filename = "src/report.txt";
         let number_list = convert_string_to_number(read_file(filename));
         let res = part_2(&number_list);
 

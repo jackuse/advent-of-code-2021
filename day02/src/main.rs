@@ -67,7 +67,7 @@ mod tests {
 
     #[test]
     fn should_pass_part1_demo() {
-        let filename = "day02/src/demo.txt";
+        let filename = "src/demo.txt";
         let res = part1(&read_file(filename));
 
         assert_eq!(res, 150);
@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn should_pass_part2_demo() {
-        let filename = "day02/src/demo.txt";
+        let filename = "src/demo.txt";
         let res = part2(&read_file(filename));
 
         assert_eq!(res, 900);
