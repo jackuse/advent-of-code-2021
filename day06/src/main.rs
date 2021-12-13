@@ -43,7 +43,8 @@ fn part2(fish: &Vec<String>) -> u64 {
     for day in 0..max_day {
         let astro_sign_new_born: usize = ((day + 7) % 9).into();
         let parent_fish: usize = (day % 9).into();
-        fish_inventory_by_astro_sign[astro_sign_new_born] += fish_inventory_by_astro_sign[parent_fish];
+        fish_inventory_by_astro_sign[astro_sign_new_born] +=
+            fish_inventory_by_astro_sign[parent_fish];
         // println!("After  {:>3} days : {:?}", day, fish_inventory_by_astro_sign);
     }
 
