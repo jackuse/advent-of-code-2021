@@ -34,8 +34,28 @@ fn part1(data: &Vec<String>) -> u32 {
 
     min
 }
-fn part2(data: &Vec<String>) -> usize {
-    0
+
+fn part2(data: &Vec<String>) -> u32 {
+    let position = extract_one_line_list(&data);
+    // todo make a ford-flukerson
+
+    // brut force
+    let max_pos = *position.iter().max().unwrap() + 1;
+    let mut total_fuel_by_position = vec![0; max_pos as usize];
+
+    for pos in 0..max_pos {
+        let mut total_fuel = 0;
+        position.iter().for_each(|&p| {
+            // (n(n+1))/2 = 1+2+...+n
+            let travel = (p as i32 - pos as i32).abs() as u32;
+            total_fuel += (travel * (travel + 1)) / 2;
+        });
+        total_fuel_by_position[pos as usize] = total_fuel;
+    }
+
+    let min = *total_fuel_by_position.iter().min().unwrap();
+
+    min
 }
 
 fn extract_one_line_list(one_line_list: &Vec<String>) -> Vec<u32> {
@@ -54,7 +74,7 @@ mod tests {
         let filename = "src/demo.txt";
         let res = part1(&read_file(filename));
 
-        assert_eq!(res, 0);
+        assert_eq!(res, 37);
     }
 
     #[test]
@@ -62,6 +82,6 @@ mod tests {
         let filename = "src/demo.txt";
         let res = part2(&read_file(filename));
 
-        assert_eq!(res, 0);
+        assert_eq!(res, 168);
     }
 }
