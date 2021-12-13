@@ -3,35 +3,42 @@
 version = 3
 
 [[package]]
-name = "day1"
+name = "day01"
 version = "0.1.0"
 dependencies = [
  "shared",
 ]
 
 [[package]]
-name = "day2"
+name = "day02"
 version = "0.1.0"
 dependencies = [
  "shared",
 ]
 
 [[package]]
-name = "day3"
+name = "day03"
 version = "0.1.0"
 dependencies = [
  "shared",
 ]
 
 [[package]]
-name = "day4"
+name = "day04"
 version = "0.1.0"
 dependencies = [
  "shared",
 ]
 
 [[package]]
-name = "day5"
+name = "day05"
+version = "0.1.0"
+dependencies = [
+ "shared",
+]
+
+[[package]]
+name = "day06"
 version = "0.1.0"
 dependencies = [
  "shared",
