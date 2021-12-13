@@ -14,22 +14,39 @@ fn main() {
 
 fn part1(vents_lines: &Vec<String>) -> u32 {
     let vector = extract_vector(vents_lines);
-    println!("vector {:?}", vector);
+    // println!("vector {:?}", vector);
     let hv_vector = vector
         .into_iter()
         .filter(|v| v.0[0] == v.1[0] || v.0[1] == v.1[1])
         .collect::<Vec<(Vec<u32>, Vec<u32>)>>();
-    println!("hv_vector {:?}", hv_vector);
+    // println!("hv_vector {:?}", hv_vector);
 
     let size = size_grid(&hv_vector);
-    println!("size {}", size);
+    // println!("size {}", size);
 
     let mut matrice = Matrice::new(size);
 
     for vector in hv_vector {
         matrice.add_vector(&vector);
     }
-    println!("matrice {}", matrice);
+    // println!("matrice {}", matrice);
+
+    matrice.count_more_than_two()
+}
+
+fn part2(vents_lines: &Vec<String>) -> u32 {
+    let vectors = extract_vector(vents_lines);
+    // println!("vector {:?}", vectors);
+
+    let size = size_grid(&vectors);
+    // println!("size {}", size);
+
+    let mut matrice = Matrice::new(size);
+
+    for vector in vectors {
+        matrice.add_vector(&vector);
+    }
+    // println!("matrice {}", matrice);
 
     matrice.count_more_than_two()
 }
@@ -56,38 +73,33 @@ impl Matrice {
 
     pub fn add_vector(&mut self, vector: &(Vec<u32>, Vec<u32>)) {
         let mut line: Vec<(u32, u32)> = vec![];
-        let is_vertical = vector.0[0] == vector.1[0];
 
-        // println!("is_vertical {}  {:?}", is_vertical, vector);
-        if is_vertical {
-            let from = if vector.0[1] > vector.1[1] {
-                vector.1[1]
-            } else {
-                vector.0[1]
-            };
-            let to = if vector.0[1] > vector.1[1] {
-                vector.0[1]
-            } else {
-                vector.1[1]
-            };
-            for y in from..=to {
-                line.push((vector.0[0], y));
-            }
+        let up_x = vector.0[0] as i64 - vector.1[0] as i64;
+        let left_y = vector.0[1] as i64 - vector.1[1] as i64;
+        let mut x = vector.0[0];
+        let mut y = vector.0[1];
+        let max_len = if up_x.abs() > left_y.abs() {
+            up_x.abs()
         } else {
-            let from = if vector.0[0] >= vector.1[0] {
-                vector.1[0]
-            } else {
-                vector.0[0]
-            };
-            let to = if vector.0[0] > vector.1[0] {
-                vector.0[0]
-            } else {
-                vector.1[0]
-            };
-            for x in from..=to {
-                line.push((x, vector.0[1]));
+            left_y.abs()
+        };
+        for _ in 0..=max_len {
+            line.push((x, y));
+            if x != vector.1[0] || y != vector.1[1] {
+                if up_x < 0 {
+                    x += 1;
+                } else if up_x > 0 {
+                    x -= 1;
+                }
+                if left_y < 0 {
+                    y += 1;
+                } else if left_y > 0 {
+                    y -= 1;
+                }
             }
         }
+
+        // println!(" line {:?}", line);
 
         line.into_iter().for_each(|point| {
             self.lines[point.1 as usize][point.0 as usize] += 1;
@@ -96,10 +108,10 @@ impl Matrice {
 
     pub fn count_more_than_two(&self) -> u32 {
         let mut res = 0;
-        self.lines.iter().for_each(|line|{
-            line.iter().for_each(|case|{
+        self.lines.iter().for_each(|line| {
+            line.iter().for_each(|case| {
                 if *case > 1 {
-                    res +=1;
+                    res += 1;
                 }
             });
         });
@@ -168,10 +180,6 @@ fn extract_vector(vents_lines: &Vec<String>) -> Vec<(Vec<u32>, Vec<u32>)> {
         .collect::<Vec<(Vec<u32>, Vec<u32>)>>()
 }
 
-fn part2(_vents_lines: &Vec<String>) -> u32 {
-    0
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -189,6 +197,6 @@ mod tests {
         let filename = "src/demo.txt";
         let res = part2(&read_file(filename));
 
-        assert_eq!(res, 0);
+        assert_eq!(res, 12);
     }
 }
