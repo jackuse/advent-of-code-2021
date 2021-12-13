@@ -1,7 +1,7 @@
 use shared::read_file;
 
 fn main() {
-    let filename = "src/input.txt";
+    let filename = "day04/src/input.txt";
     let bingo_board = read_file(filename);
     // commands.iter().for_each(|c| println!("{}", *c));
 
@@ -220,7 +220,7 @@ mod tests {
 
     #[test]
     fn should_pass_part1_demo() {
-        let filename = "src/demo.txt";
+        let filename = "day04/src/demo.txt";
         let res = part1(&read_file(filename));
 
         assert_eq!(res, 4512);
@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     fn should_pass_part1_demo_col() {
-        let filename = "src/demo-col.txt";
+        let filename = "day04/src/demo-col.txt";
         let res = part1(&read_file(filename));
 
         assert_eq!(res, 2590);
@@ -236,7 +236,7 @@ mod tests {
 
     #[test]
     fn should_pass_part2_demo() {
-        let filename = "src/demo.txt";
+        let filename = "day04/src/demo.txt";
         let res = part2(&read_file(filename));
 
         assert_eq!(res, 1924);

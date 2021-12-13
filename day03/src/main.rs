@@ -1,7 +1,7 @@
 use shared::read_file;
 
 fn main() {
-    let filename = "src/input.txt";
+    let filename = "day03/src/input.txt";
     let diag_report = read_file(filename);
 
     // commands.iter().for_each(|c| println!("{}", *c));
@@ -112,7 +112,7 @@ mod tests {
 
     #[test]
     fn should_pass_part1_demo() {
-        let filename = "src/demo.txt";
+        let filename = "day03/src/demo.txt";
         let res = part1(&read_file(filename));
 
         assert_eq!(res, 198);
@@ -120,7 +120,7 @@ mod tests {
 
     #[test]
     fn should_pass_part2_demo() {
-        let filename = "src/demo.txt";
+        let filename = "day03/src/demo.txt";
         let res = part2(&read_file(filename));
 
         assert_eq!(res, 230);
