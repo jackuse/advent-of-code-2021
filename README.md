@@ -7,7 +7,7 @@ https://adventofcode.com/
 add day :
 
 ```bash
-cargo new dayX --vcs none
+cargo new dayXX --vcs none
 ```
 
 run :
