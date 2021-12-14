@@ -59,5 +59,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "day09"
+version = "0.1.0"
+dependencies = [
+ "shared",
+ "simple-matrix",
+]
+
+[[package]]
 name = "shared"
 version = "0.1.0"
+
+[[package]]
+name = "simple-matrix"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6927a3d2ea606d10c38c7b923e108e29a2f47ca287e1cb707fa898ce4d58aa7c"
